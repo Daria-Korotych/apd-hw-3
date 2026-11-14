@@ -64,6 +64,7 @@ final class StudentFormViewController: UIViewController {
         case .edit: title = Self.editTitle
         }
         view.backgroundColor = .systemGroupedBackground
+        prefillIfEditing()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: Self.cancelTitle, style: .plain, target: self, action: #selector(cancelTapped))
         let save = UIBarButtonItem(title: Self.saveTitle, style: .done, target: self, action: #selector(saveTapped))
@@ -78,6 +79,12 @@ final class StudentFormViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).offset(Layout.inset)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(Layout.inset)
         }
+    }
+
+    private func prefillIfEditing() {
+        guard case .edit(let id) = mode, let student = store.students.first(where: { $0.id == id }) else { return }
+        nameField.text = student.name
+        ageField.text = String(student.age)
     }
 
     @objc private func cancelTapped() {

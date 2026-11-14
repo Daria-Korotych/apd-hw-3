@@ -5,6 +5,9 @@ final class StudentDirectoryFlowTests: XCTestCase {
     private let newName = "Grace Hopper"
     private let newAge = "35"
     private let cancelTitle = "Cancel"
+    private let editedName = "Ada Byron"
+    private let editedAge = "41"
+    private let extraText = " Jr"
     private let accessibilityTextSizeArguments = ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
 
     override func setUp() {
@@ -107,4 +110,56 @@ final class StudentDirectoryFlowTests: XCTestCase {
         XCTAssertTrue(list.waitForExistence(timeout: uiTimeout))
         XCTAssertEqual(list.cells.count, Seed.studentCount)
     }
+
+    func testEditStudentUpdatesDetailsAndList() {
+        let app = launchApp()
+        openEditForm(in: app)
+
+        let nameField = app.textFields[UITestID.studentNameField]
+        replaceText(in: nameField, with: editedName)
+        let ageField = app.textFields[UITestID.studentAgeField]
+        replaceText(in: ageField, with: editedAge)
+        app.buttons[UITestID.saveStudentButton].tap()
+
+        XCTAssertTrue(app.staticTexts[DetailTextForTests.age(editedAge)].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts[editedName].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let list = app.tables[UITestID.studentList]
+        XCTAssertTrue(list.staticTexts[editedName].waitForExistence(timeout: uiTimeout))
+        XCTAssertFalse(list.staticTexts[Seed.adaName].exists)
+    }
+
+    func testCancelEditKeepsStudent() {
+        let app = launchApp()
+        openEditForm(in: app)
+
+        let nameField = app.textFields[UITestID.studentNameField]
+        nameField.tap()
+        nameField.typeText(extraText)
+        app.navigationBars.buttons[cancelTitle].tap()
+
+        XCTAssertTrue(app.otherElements[UITestID.studentDetails].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(app.staticTexts[Seed.adaName].exists)
+    }
+
+    private func openEditForm(in app: XCUIApplication) {
+        let ada = app.cells[UITestID.studentCell(Seed.adaID)]
+        XCTAssertTrue(ada.waitForExistence(timeout: uiTimeout))
+        ada.tap()
+        let edit = app.buttons[UITestID.editStudentButton]
+        XCTAssertTrue(edit.waitForExistence(timeout: uiTimeout))
+        edit.tap()
+        XCTAssertTrue(app.textFields[UITestID.studentNameField].waitForExistence(timeout: uiTimeout))
+    }
+
+    private func replaceText(in field: XCUIElement, with text: String) {
+        field.tap()
+        let current = field.value as? String ?? ""
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+        field.typeText(text)
+    }
+}
+
+private enum DetailTextForTests {
+    static func age(_ age: String) -> String { "Age: \(age)" }
 }

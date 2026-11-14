@@ -9,6 +9,8 @@ final class StudentDetailViewController: UIViewController {
         static let horizontalInset: CGFloat = 16
     }
 
+    private static let editLabel = "Edit student"
+
     private let store: StudentStore
     private let studentID: UUID
 
@@ -73,6 +75,10 @@ final class StudentDetailViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide).offset(-2 * Layout.horizontalInset)
         }
         avatarImageView.snp.makeConstraints { $0.size.equalTo(Layout.avatarSize) }
+        let edit = UIBarButtonItem(systemItem: .edit, primaryAction: UIAction { [weak self] _ in self?.presentEditForm() })
+        edit.accessibilityIdentifier = AccessibilityID.editStudentButton
+        edit.accessibilityLabel = Self.editLabel
+        navigationItem.rightBarButtonItem = edit
         subjectsHeaderLabel.text = DetailText.subjectsHeader
         subjectsHeaderLabel.accessibilityTraits = .header
     }
@@ -116,6 +122,13 @@ final class StudentDetailViewController: UIViewController {
             button.accessibilityIdentifier = AccessibilityID.subjectButton(subject)
             subjectsStack.addArrangedSubview(button)
         }
+    }
+
+    private func presentEditForm() {
+        let form = StudentFormViewController(store: store, mode: .edit(studentID)) { [weak self] in
+            self?.reload()
+        }
+        present(UINavigationController(rootViewController: form), animated: true)
     }
 
     private func showStudents(matching subject: String) {
