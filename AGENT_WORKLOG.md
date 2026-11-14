@@ -23,7 +23,7 @@ you rejected or revised; if none was rejectable, explain why.
   - Deferred by ruling and left as is: the generic `catch` in the form (Swift untyped throws needs it), name autocapitalization, `cells.count` counting only loaded cells.
   - **(student)**: I chose to approve every commit myself instead of letting the agent work alone. When I ran tests myself, I found failing tests that the agent's runs did not show.
 - Exact local test command and result: 2026-11-14, `xcodebuild -project StudentDirectory.xcodeproj -scheme StudentDirectory -destination 'platform=iOS Simulator,name=iPhone 17' test 2>&1 | grep -E "error:|Clone|TEST (SUCCEEDED|FAILED)" | tail -10` printed `** TEST SUCCEEDED **`. `xcrun xcresulttool get test-results summary` on the newest `.xcresult` reported result Passed, 23 total, 23 passed, 0 failed, 0 skipped (2 starter unit + 9 student unit + 2 starter UI + 10 student UI).
-- CI URL/status: pending, filled after the PR's CI run.
+- CI URL/status: passed, `** TEST SUCCEEDED **` on `macos-15` with Xcode 16.4. Push run: https://github.com/Daria-Korotych/apd-hw-3/actions/runs/43601668055 (passed). PR run: https://github.com/Daria-Korotych/apd-hw-3/actions/runs/43601670315 (attempt 1 failed before building with "Unable to find a device matching ... iPhone 17", because the runner had no simulator devices; the push run on the same commit and runner image passed, so it was a runner problem; attempt 2 passed).
 - Known limitation or remaining risk:
   - `String(grade)` would show floating-point noise for a computed grade; the seed data is clean.
   - No tests for name trimming, the hidden Subjects header, or multi-decimal grades.
