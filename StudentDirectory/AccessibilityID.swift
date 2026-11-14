@@ -22,3 +22,13 @@ enum StudentText {
         "Age \(age) · Grade \(String(format: "%.1f", grade))"
     }
 }
+
+enum DetailText {
+    static let subjectsHeader = "Subjects"
+
+    static func age(_ age: Int) -> String { "Age: \(age)" }
+    static func grade(_ grade: Double) -> String { "Average grade: \(String(format: "%.1f", grade))" }
+    static func scholarship(_ holder: Bool) -> String { "Scholarship: \(holder ? "Yes" : "No")" }
+    static func id(_ id: UUID) -> String { "ID: \(id.uuidString)" }
+    static func avatar(_ name: String) -> String { "Avatar: \(name)" }
+}

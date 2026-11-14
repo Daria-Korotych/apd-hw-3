@@ -20,6 +20,8 @@ enum Seed {
     static let studentCount = 10
     static let adaID = id(1)
     static let adaName = "Ada Lovelace"
+    static let adaAgeText = "Age: 20"
+    static let adaGradeText = "Average grade: 97.5"
     static let knuthName = "Donald Knuth"
     static let katherineName = "Katherine Johnson"
     static let mathSubject = "Math"

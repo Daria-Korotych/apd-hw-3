@@ -55,4 +55,10 @@ extension StudentListViewController: UITableViewDataSource, UITableViewDelegate 
         (cell as? StudentCell)?.configure(with: rows[indexPath.row])
         return cell
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let details = StudentDetailViewController(store: store, studentID: rows[indexPath.row].id)
+        navigationController?.pushViewController(details, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
