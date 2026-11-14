@@ -43,10 +43,11 @@ final class StudentDirectoryFlowTests: XCTestCase {
         XCTAssertTrue(ada.waitForExistence(timeout: uiTimeout))
         ada.tap()
 
-        XCTAssertTrue(app.otherElements[UITestID.studentDetails].waitForExistence(timeout: uiTimeout))
-        XCTAssertTrue(app.staticTexts[Seed.adaName].exists)
-        XCTAssertTrue(app.staticTexts[Seed.adaAgeText].exists)
-        XCTAssertTrue(app.staticTexts[Seed.adaGradeText].exists)
+        let details = app.otherElements[UITestID.studentDetails]
+        XCTAssertTrue(details.waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(details.staticTexts[Seed.adaName].exists)
+        XCTAssertTrue(details.staticTexts[Seed.adaAgeText].exists)
+        XCTAssertTrue(details.staticTexts[Seed.adaGradeText].exists)
 
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(app.navigationBars[listTitle].waitForExistence(timeout: uiTimeout))
@@ -124,8 +125,10 @@ final class StudentDirectoryFlowTests: XCTestCase {
         replaceText(in: ageField, with: editedAge)
         app.buttons[UITestID.saveStudentButton].tap()
 
-        XCTAssertTrue(app.staticTexts[DetailTextForTests.age(editedAge)].waitForExistence(timeout: uiTimeout))
-        XCTAssertTrue(app.staticTexts[editedName].exists)
+        let details = app.otherElements[UITestID.studentDetails]
+        XCTAssertTrue(details.staticTexts[DetailTextForTests.age(editedAge)].waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(details.staticTexts[editedName].exists)
+        XCTAssertTrue(app.navigationBars[editedName].exists)
         app.navigationBars.buttons.element(boundBy: 0).tap()
         let list = app.tables[UITestID.studentList]
         XCTAssertTrue(list.staticTexts[editedName].waitForExistence(timeout: uiTimeout))
@@ -141,8 +144,9 @@ final class StudentDirectoryFlowTests: XCTestCase {
         nameField.typeText(extraText)
         app.navigationBars.buttons[cancelTitle].tap()
 
-        XCTAssertTrue(app.otherElements[UITestID.studentDetails].waitForExistence(timeout: uiTimeout))
-        XCTAssertTrue(app.staticTexts[Seed.adaName].exists)
+        let details = app.otherElements[UITestID.studentDetails]
+        XCTAssertTrue(details.waitForExistence(timeout: uiTimeout))
+        XCTAssertTrue(details.staticTexts[Seed.adaName].exists)
     }
 
     func testSwipeDeleteRemovesStudent() {

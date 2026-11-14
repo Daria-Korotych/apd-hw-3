@@ -84,6 +84,7 @@ extension StudentListViewController: UITableViewDataSource, UITableViewDelegate 
             do {
                 try store.deleteStudent(id: id)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
+                navigationController?.viewControllers.removeAll { ($0 as? StudentDetailViewController)?.studentID == id }
                 completion(true)
             } catch {
                 tableView.reloadData()

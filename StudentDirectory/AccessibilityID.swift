@@ -19,7 +19,7 @@ enum StudentText {
     static let defaultAvatar = "avatar-default"
 
     static func summary(age: Int, grade: Double) -> String {
-        "Age \(age) · Grade \(String(format: "%.1f", grade))"
+        "Age \(age) · Grade \(String(grade))"
     }
 }
 
@@ -27,7 +27,7 @@ enum DetailText {
     static let subjectsHeader = "Subjects"
 
     static func age(_ age: Int) -> String { "Age: \(age)" }
-    static func grade(_ grade: Double) -> String { "Average grade: \(String(format: "%.1f", grade))" }
+    static func grade(_ grade: Double) -> String { "Average grade: \(String(grade))" }
     static func scholarship(_ holder: Bool) -> String { "Scholarship: \(holder ? "Yes" : "No")" }
     static func id(_ id: UUID) -> String { "ID: \(id.uuidString)" }
     static func avatar(_ name: String) -> String { "Avatar: \(name)" }

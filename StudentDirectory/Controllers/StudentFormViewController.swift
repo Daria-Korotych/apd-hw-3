@@ -36,9 +36,9 @@ final class StudentFormViewController: UIViewController {
     private let mode: Mode
     private let onSave: () -> Void
 
-    let nameField = StudentFormViewController.makeField(
+    private let nameField = StudentFormViewController.makeField(
         placeholder: namePlaceholder, identifier: AccessibilityID.studentNameField, keyboard: .default)
-    let ageField = StudentFormViewController.makeField(
+    private let ageField = StudentFormViewController.makeField(
         placeholder: agePlaceholder, identifier: AccessibilityID.studentAgeField, keyboard: .numberPad)
 
     init(store: StudentStore, mode: Mode, onSave: @escaping () -> Void) {
@@ -96,10 +96,11 @@ final class StudentFormViewController: UIViewController {
             showAlert(message: Self.invalidAgeMessage)
             return
         }
+        let name = (nameField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         do {
             switch mode {
-            case .add: try store.addStudent(name: nameField.text ?? "", age: age)
-            case .edit(let id): try store.updateStudent(id: id, name: nameField.text ?? "", age: age)
+            case .add: try store.addStudent(name: name, age: age)
+            case .edit(let id): try store.updateStudent(id: id, name: name, age: age)
             }
         } catch let error as StudentStoreError {
             showAlert(message: error.message)

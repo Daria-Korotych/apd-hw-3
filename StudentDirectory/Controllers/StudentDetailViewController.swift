@@ -12,7 +12,7 @@ final class StudentDetailViewController: UIViewController {
     private static let editLabel = "Edit student"
 
     private let store: StudentStore
-    private let studentID: UUID
+    let studentID: UUID
 
     private let scrollView = UIScrollView()
 
@@ -89,12 +89,7 @@ final class StudentDetailViewController: UIViewController {
     }
 
     func reload() {
-        guard let student = store.students.first(where: { $0.id == studentID }) else {
-            if navigationController?.topViewController === self {
-                navigationController?.popViewController(animated: false)
-            }
-            return
-        }
+        guard let student = store.students.first(where: { $0.id == studentID }) else { return }
         title = student.name
         avatarImageView.image = UIImage(named: student.avatarName) ?? UIImage(named: StudentText.defaultAvatar)
         nameLabel.text = student.name
@@ -108,6 +103,7 @@ final class StudentDetailViewController: UIViewController {
 
     private func rebuildSubjects(_ subjects: [String]) {
         subjectsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        subjectsHeaderLabel.isHidden = subjects.isEmpty
         for subject in subjects {
             var configuration = UIButton.Configuration.tinted()
             configuration.title = subject
