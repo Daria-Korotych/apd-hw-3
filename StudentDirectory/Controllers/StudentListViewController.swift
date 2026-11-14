@@ -3,6 +3,7 @@ import UIKit
 
 final class StudentListViewController: UIViewController {
     private static let defaultTitle = "Students"
+    private static let addStudentLabel = "Add student"
 
     private let store: StudentStore
     private let subject: String?
@@ -33,10 +34,23 @@ final class StudentListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = subject ?? Self.defaultTitle
+        if subject == nil {
+            let add = UIBarButtonItem(systemItem: .add, primaryAction: UIAction { [weak self] _ in self?.presentAddForm() })
+            add.accessibilityIdentifier = AccessibilityID.addStudentButton
+            add.accessibilityLabel = Self.addStudentLabel
+            navigationItem.rightBarButtonItem = add
+        }
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+
+    private func presentAddForm() {
+        let form = StudentFormViewController(store: store, mode: .add) { [weak self] in
+            self?.tableView.reloadData()
+        }
+        present(UINavigationController(rootViewController: form), animated: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {

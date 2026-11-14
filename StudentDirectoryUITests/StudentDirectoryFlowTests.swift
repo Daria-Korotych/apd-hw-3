@@ -2,6 +2,9 @@ import XCTest
 
 final class StudentDirectoryFlowTests: XCTestCase {
     private let listTitle = "Students"
+    private let newName = "Grace Hopper"
+    private let newAge = "35"
+    private let cancelTitle = "Cancel"
     private let accessibilityTextSizeArguments = ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
 
     override func setUp() {
@@ -61,5 +64,47 @@ final class StudentDirectoryFlowTests: XCTestCase {
             XCTAssertTrue(list.staticTexts[name].exists, "missing \(name)")
         }
         XCTAssertFalse(app.cells[UITestID.studentCell(Seed.turingID)].exists)
+    }
+
+    func testAddStudentAppendsRow() {
+        let app = launchApp()
+
+        let add = app.buttons[UITestID.addStudentButton]
+        XCTAssertTrue(add.waitForExistence(timeout: uiTimeout))
+        add.tap()
+        let nameField = app.textFields[UITestID.studentNameField]
+        XCTAssertTrue(nameField.waitForExistence(timeout: uiTimeout))
+        nameField.tap()
+        nameField.typeText(newName)
+        let ageField = app.textFields[UITestID.studentAgeField]
+        ageField.tap()
+        ageField.typeText(newAge)
+        app.buttons[UITestID.saveStudentButton].tap()
+
+        let list = app.tables[UITestID.studentList]
+        XCTAssertTrue(list.staticTexts[newName].waitForExistence(timeout: uiTimeout))
+        XCTAssertEqual(list.cells.count, Seed.studentCount + 1)
+    }
+
+    func testAddBlankNameShowsAlertAndKeepsList() {
+        let app = launchApp()
+
+        let add = app.buttons[UITestID.addStudentButton]
+        XCTAssertTrue(add.waitForExistence(timeout: uiTimeout))
+        add.tap()
+        let ageField = app.textFields[UITestID.studentAgeField]
+        XCTAssertTrue(ageField.waitForExistence(timeout: uiTimeout))
+        ageField.tap()
+        ageField.typeText(newAge)
+        app.buttons[UITestID.saveStudentButton].tap()
+
+        let alert = app.alerts.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: uiTimeout))
+        alert.buttons.firstMatch.tap()
+        app.navigationBars.buttons[cancelTitle].tap()
+
+        let list = app.tables[UITestID.studentList]
+        XCTAssertTrue(list.waitForExistence(timeout: uiTimeout))
+        XCTAssertEqual(list.cells.count, Seed.studentCount)
     }
 }
