@@ -4,6 +4,7 @@ import UIKit
 final class StudentListViewController: UIViewController {
     private static let defaultTitle = "Students"
     private static let addStudentLabel = "Add student"
+    private static let deleteActionTitle = "Delete"
 
     private let store: StudentStore
     private let subject: String?
@@ -74,5 +75,21 @@ extension StudentListViewController: UITableViewDataSource, UITableViewDelegate 
         let details = StudentDetailViewController(store: store, studentID: rows[indexPath.row].id)
         navigationController?.pushViewController(details, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let id = rows[indexPath.row].id
+        let delete = UIContextualAction(style: .destructive, title: Self.deleteActionTitle) { [weak self] _, _, completion in
+            guard let self else { return completion(false) }
+            do {
+                try store.deleteStudent(id: id)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                completion(true)
+            } catch {
+                tableView.reloadData()
+                completion(false)
+            }
+        }
+        return UISwipeActionsConfiguration(actions: [delete])
     }
 }

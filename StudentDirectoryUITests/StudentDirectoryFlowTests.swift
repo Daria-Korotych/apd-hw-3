@@ -8,6 +8,9 @@ final class StudentDirectoryFlowTests: XCTestCase {
     private let editedName = "Ada Byron"
     private let editedAge = "41"
     private let extraText = " Jr"
+    private let deleteTitle = "Delete"
+    private let remainingAfterDelete = Seed.studentCount - 1
+    private let mathCountAfterDelete = Seed.mathNames.count - 1
     private let accessibilityTextSizeArguments = ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
 
     override func setUp() {
@@ -140,6 +143,46 @@ final class StudentDirectoryFlowTests: XCTestCase {
 
         XCTAssertTrue(app.otherElements[UITestID.studentDetails].waitForExistence(timeout: uiTimeout))
         XCTAssertTrue(app.staticTexts[Seed.adaName].exists)
+    }
+
+    func testSwipeDeleteRemovesStudent() {
+        let app = launchApp()
+
+        let ada = app.cells[UITestID.studentCell(Seed.adaID)]
+        XCTAssertTrue(ada.waitForExistence(timeout: uiTimeout))
+        ada.swipeLeft()
+        app.buttons[deleteTitle].tap()
+
+        expectGone(ada)
+        XCTAssertEqual(app.tables[UITestID.studentList].cells.count, remainingAfterDelete)
+    }
+
+    func testDeletingFromSubjectListPopsStaleDetails() {
+        let app = launchApp()
+
+        let ada = app.cells[UITestID.studentCell(Seed.adaID)]
+        XCTAssertTrue(ada.waitForExistence(timeout: uiTimeout))
+        ada.tap()
+        let mathButton = app.buttons[UITestID.subjectButton(Seed.mathSubject)]
+        XCTAssertTrue(mathButton.waitForExistence(timeout: uiTimeout))
+        mathButton.tap()
+        XCTAssertTrue(app.navigationBars[Seed.mathSubject].waitForExistence(timeout: uiTimeout))
+
+        let mathAda = app.cells[UITestID.studentCell(Seed.adaID)]
+        XCTAssertTrue(mathAda.waitForExistence(timeout: uiTimeout))
+        mathAda.swipeLeft()
+        app.buttons[deleteTitle].tap()
+        expectGone(mathAda)
+        XCTAssertEqual(app.tables[UITestID.studentList].cells.count, mathCountAfterDelete)
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.navigationBars[listTitle].waitForExistence(timeout: uiTimeout))
+        expectGone(app.cells[UITestID.studentCell(Seed.adaID)])
+    }
+
+    private func expectGone(_ element: XCUIElement) {
+        let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element)
+        wait(for: [gone], timeout: uiTimeout)
     }
 
     private func openEditForm(in app: XCUIApplication) {
