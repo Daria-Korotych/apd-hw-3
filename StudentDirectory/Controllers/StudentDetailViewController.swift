@@ -103,15 +103,24 @@ final class StudentDetailViewController: UIViewController {
     private func rebuildSubjects(_ subjects: [String]) {
         subjectsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for subject in subjects {
-            var configuration = UIButton.Configuration.plain()
+            var configuration = UIButton.Configuration.tinted()
             configuration.title = subject
-            configuration.contentInsets = .zero
-            let button = UIButton(configuration: configuration)
-            button.titleLabel?.font = .preferredFont(forTextStyle: .body)
-            button.titleLabel?.adjustsFontForContentSizeCategory = true
+            configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
+                var attributes = attributes
+                attributes.font = .preferredFont(forTextStyle: .body)
+                return attributes
+            }
+            let button = UIButton(configuration: configuration, primaryAction: UIAction { [weak self] _ in
+                self?.showStudents(matching: subject)
+            })
             button.accessibilityIdentifier = AccessibilityID.subjectButton(subject)
             subjectsStack.addArrangedSubview(button)
         }
+    }
+
+    private func showStudents(matching subject: String) {
+        let list = StudentListViewController(store: store, subject: subject)
+        navigationController?.pushViewController(list, animated: true)
     }
 
     private static func makeLabel(style: UIFont.TextStyle) -> UILabel {

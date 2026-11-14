@@ -22,6 +22,8 @@ enum Seed {
     static let adaName = "Ada Lovelace"
     static let adaAgeText = "Age: 20"
     static let adaGradeText = "Average grade: 97.5"
+    static let turingID = id(2)
+    static let turingName = "Alan Turing"
     static let knuthName = "Donald Knuth"
     static let katherineName = "Katherine Johnson"
     static let mathSubject = "Math"
